@@ -2,14 +2,12 @@
 
 // standard c++ library
 #include<iostream>
-#include<string>
-#include<memory>
 
 // importing SDL2 header
 #include<SDL.h>
 
-#include "texture_rectangle.hpp"
-
+// importing sdl2_image
+#include<SDL_image.h>
 
 int main(int argc, char* argv[])
 {
@@ -36,22 +34,33 @@ int main(int argc, char* argv[])
     // here "-1" will make choose sdl rendering driver automatically
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    std::vector<std::shared_ptr<TextureRectangle>> rects;
-    for(int i = 0; i < 10; i++) {
-        std::shared_ptr<TextureRectangle> rect = std::make_shared<TextureRectangle>(renderer, "./images/image.bmp");
-        rects.push_back(rect);
+    // intializing flags to check if the images are ready to get imported
+    int flags = IMG_INIT_JPG | IMG_INIT_PNG;
+    int initStatus = IMG_Init(flags);
+
+    // initailize SDL2_image
+    if((initStatus & flags) != flags) {
+        std::cout  << "SDL2_image format not available" << std::endl;
     }
 
-    int row = 0;
-    int col = 1;
-    for(int i = 0; i < 10; i++) {
-        rects[i]->SetRectangleProperties(20*col, 30*row, 200, 200);
-        if(i%3 == 0) {
-            row++;
-            col = 0;
-        }
-        col++;
+    // create an image surface
+    SDL_Surface *image;
+    image = IMG_Load("./images/image.png");
+
+    // error check if image is not loaded
+    if(!image) {
+        std::cout << "Image not loaded..." << std::endl;
     }
+
+    // create a texture
+    SDL_Texture *ourPng = SDL_CreateTextureFromSurface(renderer, image);
+
+    // create a reactangle
+    SDL_Rect rectangle;
+    rectangle.x = 50;
+    rectangle.y = 50;
+    rectangle.w = 200;
+    rectangle.h = 50;
 
 
     // infinite loop for application
@@ -73,24 +82,43 @@ int main(int argc, char* argv[])
         
         // set renderer bg color first
         // else it will be changed to line draw color
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);            // black color
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0xFF, SDL_ALPHA_OPAQUE);            // black color
         // (3) clear and draw the screen
         SDL_RenderClear(renderer);
 
         // Set the render draw color
-        SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);      // white color
-        
+        // SDL_SetRenderDrawColor(renderer, 255, 255, 255, SDL_ALPHA_OPAQUE);      // white color
         // do our drawing here
-        for(auto& rect: rects){
-            rect->Render(renderer);
-        }
+        // SDL_RenderDrawLine(renderer, 5, 5, 200, 220);
+        // SDL_RenderDrawRect(renderer, &rectangle);
+
+        // Draw texture using SDL_RenderCopy
+        // SDL_RenderCopy(renderer, textureText, NULL, &rectangle);
+
+        SDL_RenderCopy(renderer, ourPng, NULL, NULL);
 
         // finally render what have been drawn
         SDL_RenderPresent(renderer);
     }
 
+    // destroying texture after being used
+    // SDL_DestroyTexture(textureText);
+
     // destroying created window
     SDL_DestroyWindow(window);
+
+    // remember to close font subsystem 
+    // TTF_CloseFont(outFont);
+
+    // free our png image surface
+    SDL_FreeSurface(image);
+
+    // destroy our texture
+    SDL_DestroyTexture(ourPng);
+
+
+    // quitting SDL2_image
+    IMG_Quit();
 
     // SDL exit/quit function
     SDL_Quit();
