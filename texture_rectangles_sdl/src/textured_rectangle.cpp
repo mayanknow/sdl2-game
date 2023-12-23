@@ -8,7 +8,7 @@
 // constructor
 TextureRectangle::TextureRectangle(SDL_Renderer* renderer, std::string filepath) {
     
-    SDL_Surface* retrieveSurface = ResourceManager::GetInstance().GetSurface("../images/image.bmp");
+    SDL_Surface* retrieveSurface = ResourceManager::GetInstance().GetSurface("../assets/images/image.bmp");
 
     // create a texture from surface
     m_texture = SDL_CreateTextureFromSurface(renderer, retrieveSurface);
