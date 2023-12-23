@@ -8,7 +8,7 @@
 // importing SDL2 header
 #include<SDL.h>
 
-#include "texture_rectangle.hpp"
+#include "../include/texture_rectangle.hpp"
 
 
 int main(int argc, char* argv[])
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
     std::vector<std::shared_ptr<TextureRectangle>> rects;
     for(int i = 0; i < 10; i++) {
-        std::shared_ptr<TextureRectangle> rect = std::make_shared<TextureRectangle>(renderer, "./images/image.bmp");
+        std::shared_ptr<TextureRectangle> rect = std::make_shared<TextureRectangle>(renderer, "../images/image.bmp");
         rects.push_back(rect);
     }
 

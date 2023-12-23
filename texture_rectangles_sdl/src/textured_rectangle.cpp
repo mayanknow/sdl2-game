@@ -1,17 +1,18 @@
+#include<iostream>
 #include<string>
 // importing SDL2 header
 #include<SDL.h>
-#include "texture_rectangle.hpp"
+#include "../include/texture_rectangle.hpp"
+#include "../include/resourceManager.hpp"
 
 // constructor
 TextureRectangle::TextureRectangle(SDL_Renderer* renderer, std::string filepath) {
-    SDL_Surface *surface = SDL_LoadBMP(filepath.c_str());
+    
+    SDL_Surface* retrieveSurface = ResourceManager::GetInstance().GetSurface("../images/image.bmp");
 
     // create a texture from surface
-    m_texture = SDL_CreateTextureFromSurface(renderer, surface);
+    m_texture = SDL_CreateTextureFromSurface(renderer, retrieveSurface);
 
-    // Free surface after the operation
-    SDL_FreeSurface(surface);
 
 }
 
